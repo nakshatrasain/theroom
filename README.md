@@ -1,5 +1,7 @@
 # The Room
 
+Video Link of the App: https://x.com/nakshlife/status/2045495713354928195?s=46&t=vgosXwVI0vWRipxzsPyFHA
+
 Functional MVP for event matchmaking.
 
 ## Run locally
