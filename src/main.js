@@ -59,12 +59,118 @@ function normalizeList(value) {
 }
 
 function inferBio(profile) {
-  return `${profile.role} focused on ${profile.build_interest}. Strongest in ${profile.skills.join(", ") || profile.strength_zone}.`;
+  const role = profile.role || "Builder";
+  const interest = profile.build_interest || profile.event_goal || "meeting interesting people at the event";
+  const strongest = profile.skills.join(", ") || profile.strength_zone || "collaboration";
+  return `${role} focused on ${interest}. Strongest in ${strongest}.`;
+}
+
+function preferredContact(profile) {
+  return (
+    profile.linkedin_handle ||
+    profile.instagram_handle ||
+    profile.x_handle ||
+    profile.contact_handle ||
+    "No contact shared yet"
+  );
+}
+
+function contactMethods(profile) {
+  return [
+    profile.linkedin_handle ? `LinkedIn: ${profile.linkedin_handle}` : null,
+    profile.instagram_handle ? `Instagram: ${profile.instagram_handle}` : null,
+    profile.x_handle ? `X: ${profile.x_handle}` : null,
+    profile.contact_handle &&
+    ![profile.linkedin_handle, profile.instagram_handle, profile.x_handle].includes(profile.contact_handle)
+      ? `Contact: ${profile.contact_handle}`
+      : null,
+  ].filter(Boolean);
+}
+
+function looksLikeUrl(value) {
+  return /^https?:\/\//i.test(value);
+}
+
+function normalizeUrl(value, base) {
+  if (!value) {
+    return null;
+  }
+
+  if (looksLikeUrl(value)) {
+    return value;
+  }
+
+  return `${base}${value.replace(/^@/, "")}`;
+}
+
+function isEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+}
+
+function primaryContactAction(attendee) {
+  if (attendee.linkedin_handle) {
+    return {
+      label: "LinkedIn",
+      url: normalizeUrl(attendee.linkedin_handle, "https://www.linkedin.com/in/"),
+    };
+  }
+
+  if (attendee.x_handle) {
+    return {
+      label: "X",
+      url: normalizeUrl(attendee.x_handle, "https://x.com/"),
+    };
+  }
+
+  if (attendee.instagram_handle) {
+    return {
+      label: "Instagram",
+      url: normalizeUrl(attendee.instagram_handle, "https://www.instagram.com/"),
+    };
+  }
+
+  if (isEmail(attendee.contact_handle)) {
+    return {
+      label: "Email",
+      url: `mailto:${attendee.contact_handle}`,
+    };
+  }
+
+  if (attendee.contact_handle) {
+    return {
+      label: "Contact",
+      url: attendee.contact_handle,
+    };
+  }
+
+  return null;
+}
+
+function fallbackIntroMessage(attendee) {
+  const senderName = state.currentProfile?.name || "I";
+  const project = state.currentProfile?.build_interest || state.currentProfile?.event_goal || "a project at this event";
+  return `Hey ${attendee.name}, I’m ${senderName}. The Room suggested we connect because it looks like there could be a strong fit. I’m exploring ${project}. Open to chatting for 10 minutes?`;
+}
+
+async function copyText(value) {
+  if (!value) {
+    return false;
+  }
+
+  try {
+    await navigator.clipboard.writeText(value);
+    return true;
+  } catch (_error) {
+    return false;
+  }
 }
 
 function setupProfileFromForm(form) {
   const formData = new FormData(form);
   const baseName = state.authProfile?.name || "Guest";
+  const linkedinHandle = String(formData.get("linkedin_handle") || "").trim();
+  const instagramHandle = String(formData.get("instagram_handle") || "").trim();
+  const xHandle = String(formData.get("x_handle") || "").trim();
 
   const profile = {
     name: baseName,
@@ -72,12 +178,15 @@ function setupProfileFromForm(form) {
     skills: normalizeList(String(formData.get("skills") || "")),
     event_goal: String(formData.get("event_goal") || "").trim(),
     build_interest: String(formData.get("build_interest") || "").trim(),
-    build_style: String(formData.get("build_style") || "").trim(),
-    pace: String(formData.get("pace") || "").trim(),
+    build_style: "visionary",
+    pace: "fast-moving",
     collaboration: "balanced",
-    strength_zone: String(formData.get("strength_zone") || "").trim(),
+    strength_zone: "product",
     looking_for: String(formData.get("looking_for") || "").trim(),
-    contact_handle: String(formData.get("contact_handle") || "").trim(),
+    linkedin_handle: linkedinHandle,
+    instagram_handle: instagramHandle,
+    x_handle: xHandle,
+    contact_handle: linkedinHandle || instagramHandle || xHandle,
   };
 
   return {
@@ -96,11 +205,10 @@ function fillSetupForm(profile) {
     skills: Array.isArray(profile.skills) ? profile.skills.join(", ") : "",
     event_goal: profile.event_goal || "Find a teammate and build this weekend",
     build_interest: profile.build_interest || "",
-    build_style: profile.build_style || "visionary",
-    pace: profile.pace || "fast-moving",
-    strength_zone: profile.strength_zone || "product",
     looking_for: profile.looking_for || "",
-    contact_handle: profile.contact_handle || "",
+    linkedin_handle: profile.linkedin_handle || "",
+    instagram_handle: profile.instagram_handle || "",
+    x_handle: profile.x_handle || "",
   };
 
   Object.entries(fields).forEach(([name, value]) => {
@@ -111,9 +219,6 @@ function fillSetupForm(profile) {
   });
 
   syncChoiceGroup("event_goal", fields.event_goal);
-  syncChoiceGroup("build_style", fields.build_style);
-  syncChoiceGroup("pace", fields.pace);
-  syncChoiceGroup("strength_zone", fields.strength_zone);
 }
 
 function setMessage(target, text, isError = false) {
@@ -127,7 +232,7 @@ function renderStatuses() {
     return;
   }
 
-  const guestMode = !state.config.supabase_enabled || !state.config.supabase_ready;
+  const guestMode = !state.config.supabase_enabled;
   const emailInput = authForm.elements.namedItem("email");
   const passwordInput = authForm.elements.namedItem("password");
 
@@ -226,7 +331,7 @@ function renderMatches() {
             </article>
             <article class="cue-card">
               <strong>Contact</strong>
-              <span>${match.attendee.contact_handle}</span>
+              <span>${preferredContact(match.attendee)}</span>
             </article>
           </div>
           <div class="tag-row">
@@ -350,7 +455,7 @@ function renderDetail() {
         <p><strong>Goal:</strong> ${attendee.event_goal}</p>
         <p><strong>Building:</strong> ${attendee.build_interest}</p>
         <p><strong>Looking for:</strong> ${attendee.looking_for}</p>
-        <p><strong>Contact:</strong> ${attendee.contact_handle}</p>
+        <p><strong>Contact:</strong> ${contactMethods(attendee).join(" · ") || "No contact shared yet"}</p>
       </section>
       <section class="detail-column">
         <h4>Working style</h4>
@@ -362,8 +467,9 @@ function renderDetail() {
     </div>
   `;
 
-  requestConnectionButton.disabled = false;
-  sendMessageButton.disabled = false;
+  const hasContactAction = Boolean(primaryContactAction(attendee));
+  requestConnectionButton.disabled = !hasContactAction;
+  sendMessageButton.disabled = !hasContactAction;
 }
 
 function syncChoiceGroup(name, value) {
@@ -602,17 +708,43 @@ function requestConnection() {
     return;
   }
 
-  introOutput.value = `Connection request ready for ${attendee.name}.`;
+  const action = primaryContactAction(attendee);
+  if (!action?.url) {
+    introOutput.value = `${attendee.name} has not shared a contact method yet.`;
+    return;
+  }
+
+  window.open(action.url, "_blank", "noopener,noreferrer");
+  introOutput.value = `Opened ${action.label} for ${attendee.name}.`;
 }
 
-function sendMessage() {
+async function sendMessage() {
   const attendee = attendeeById(state.selectedAttendeeId);
   if (!attendee) {
     introOutput.value = "Choose someone first.";
     return;
   }
 
-  introOutput.value = `Opening message flow for ${attendee.name}...`;
+  const action = primaryContactAction(attendee);
+  if (!action?.url) {
+    introOutput.value = `${attendee.name} has not shared a contact method yet.`;
+    return;
+  }
+
+  const message = introOutput.value.trim() || fallbackIntroMessage(attendee);
+  const copied = await copyText(message);
+
+  if (action.label === "Email") {
+    const subject = encodeURIComponent(`Quick hello from ${state.currentProfile?.name || "The Room"}`);
+    const body = encodeURIComponent(message);
+    window.open(`${action.url}?subject=${subject}&body=${body}`, "_blank", "noopener,noreferrer");
+  } else {
+    window.open(action.url, "_blank", "noopener,noreferrer");
+  }
+
+  introOutput.value = copied
+    ? `Opened ${action.label} for ${attendee.name}. Your message is copied and ready to paste.`
+    : `Opened ${action.label} for ${attendee.name}. Paste the intro message manually if needed.`;
 }
 
 function logout() {
@@ -629,9 +761,6 @@ function logout() {
     authForm.reset();
     profileForm.reset();
     syncChoiceGroup("event_goal", "Find a teammate and build this weekend");
-    syncChoiceGroup("build_style", "visionary");
-    syncChoiceGroup("pace", "fast-moving");
-    syncChoiceGroup("strength_zone", "product");
     matchesExperience.hidden = true;
     setMessage(matchesState, "No stack yet. Complete the setup to generate matches.");
     detailCard.className = "detail-card empty-state";

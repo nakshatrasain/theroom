@@ -241,11 +241,22 @@
                 <div class="field-grid two-up">
                   <label>
                     <span>Role</span>
-                    <input name="role" type="text" placeholder="Founder, engineer, designer" required />
+                    <input name="role" type="text" placeholder="Founder, engineer, designer" />
                   </label>
                   <label>
-                    <span>Contact handle</span>
-                    <input name="contact_handle" type="text" placeholder="@telegram or email" required />
+                    <span>LinkedIn</span>
+                    <input name="linkedin_handle" type="text" placeholder="linkedin.com/in/your-name" />
+                  </label>
+                </div>
+
+                <div class="field-grid two-up">
+                  <label>
+                    <span>Instagram</span>
+                    <input name="instagram_handle" type="text" placeholder="@yourhandle" />
+                  </label>
+                  <label>
+                    <span>X</span>
+                    <input name="x_handle" type="text" placeholder="@yourhandle" />
                   </label>
                 </div>
 
@@ -263,53 +274,18 @@
                 <div class="field-grid two-up">
                   <label>
                     <span>Top skills</span>
-                    <input name="skills" type="text" placeholder="AI, product, growth" required />
+                    <input name="skills" type="text" placeholder="AI, product, growth" />
                   </label>
                   <label>
                     <span>Looking for</span>
-                    <input name="looking_for" type="text" placeholder="Designer, engineer, GTM" required />
+                    <input name="looking_for" type="text" placeholder="Designer, engineer, GTM" />
                   </label>
                 </div>
 
                 <label>
                   <span>What are you building or exploring?</span>
-                  <textarea name="build_interest" rows="3" placeholder="An AI event networking app for hackathons" required></textarea>
+                  <textarea name="build_interest" rows="3" placeholder="An AI event networking app for hackathons"></textarea>
                 </label>
-
-                <div class="field-grid three-up">
-                  <label class="pick-group">
-                    <span>Strength</span>
-                    <div class="choice-grid choice-grid-compact" data-choice-group="strength_zone">
-                      <button type="button" class="choice-chip is-active" data-choice-value="product">Product</button>
-                      <button type="button" class="choice-chip" data-choice-value="engineering">Engineering</button>
-                      <button type="button" class="choice-chip" data-choice-value="design">Design</button>
-                      <button type="button" class="choice-chip" data-choice-value="growth">Growth</button>
-                      <button type="button" class="choice-chip" data-choice-value="ops">Ops</button>
-                    </div>
-                    <input type="hidden" name="strength_zone" value="product" />
-                  </label>
-
-                  <label class="pick-group">
-                    <span>Build style</span>
-                    <div class="choice-grid choice-grid-compact" data-choice-group="build_style">
-                      <button type="button" class="choice-chip is-active" data-choice-value="visionary">Visionary</button>
-                      <button type="button" class="choice-chip" data-choice-value="operator">Operator</button>
-                      <button type="button" class="choice-chip" data-choice-value="maker">Maker</button>
-                      <button type="button" class="choice-chip" data-choice-value="strategist">Strategist</button>
-                    </div>
-                    <input type="hidden" name="build_style" value="visionary" />
-                  </label>
-
-                  <label class="pick-group">
-                    <span>Pace</span>
-                    <div class="choice-grid choice-grid-compact" data-choice-group="pace">
-                      <button type="button" class="choice-chip is-active" data-choice-value="fast-moving">Fast</button>
-                      <button type="button" class="choice-chip" data-choice-value="steady">Steady</button>
-                      <button type="button" class="choice-chip" data-choice-value="deliberate">Deliberate</button>
-                    </div>
-                    <input type="hidden" name="pace" value="fast-moving" />
-                  </label>
-                </div>
 
                 <div class="action-row">
                   <button type="submit">Generate matches</button>

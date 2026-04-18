@@ -551,29 +551,51 @@ class TheRoomHandler(BaseHTTPRequestHandler):
         print(f"{self.address_string()} - {format % args}")
 
     def normalize_profile(self, profile: dict[str, Any]) -> dict[str, Any]:
-        required = ["name", "role", "event_goal", "build_interest", "bio", "looking_for", "contact_handle"]
-        for key in required:
-            if not str(profile.get(key, "")).strip():
-                raise ValueError(f"Missing required field: {key}")
+        name = str(profile.get("name", "")).strip()
+        if not name:
+            raise ValueError("Missing required field: name")
 
         skills = profile.get("skills", [])
         if isinstance(skills, str):
             skills = [item.strip() for item in skills.split(",")]
+        skills = normalize_list(skills)
+
+        linkedin_handle = str(profile.get("linkedin_handle", "")).strip()
+        instagram_handle = str(profile.get("instagram_handle", "")).strip()
+        x_handle = str(profile.get("x_handle", "")).strip()
+        contact_handle = (
+            str(profile.get("contact_handle", "")).strip()
+            or linkedin_handle
+            or instagram_handle
+            or x_handle
+        )
+        role = str(profile.get("role", "")).strip() or "Builder"
+        event_goal = str(profile.get("event_goal", "")).strip() or "Meet interesting people at this event"
+        build_interest = str(profile.get("build_interest", "")).strip()
+        strength_zone = str(profile.get("strength_zone", "product")).strip() or "product"
+        looking_for = str(profile.get("looking_for", "")).strip()
+        bio = str(profile.get("bio", "")).strip() or (
+            f"{role} focused on {build_interest or event_goal}. "
+            f"Strongest in {', '.join(skills) or strength_zone}."
+        )
 
         return {
-            "id": profile.get("id") or f"profile-{re.sub(r'[^a-z0-9]+', '-', profile['name'].lower()).strip('-')}",
-            "name": profile["name"].strip(),
-            "role": profile["role"].strip(),
-            "skills": normalize_list(skills),
-            "event_goal": profile["event_goal"].strip(),
-            "build_interest": profile["build_interest"].strip(),
-            "bio": profile["bio"].strip(),
+            "id": profile.get("id") or f"profile-{re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')}",
+            "name": name,
+            "role": role,
+            "skills": skills,
+            "event_goal": event_goal,
+            "build_interest": build_interest,
+            "bio": bio,
             "build_style": profile.get("build_style", "visionary"),
             "pace": profile.get("pace", "fast-moving"),
             "collaboration": profile.get("collaboration", "balanced"),
-            "strength_zone": profile.get("strength_zone", "product"),
-            "looking_for": profile["looking_for"].strip(),
-            "contact_handle": profile["contact_handle"].strip(),
+            "strength_zone": strength_zone,
+            "looking_for": looking_for,
+            "contact_handle": contact_handle,
+            "linkedin_handle": linkedin_handle,
+            "instagram_handle": instagram_handle,
+            "x_handle": x_handle,
         }
 
     def require_auth_client(self) -> SupabaseClient:

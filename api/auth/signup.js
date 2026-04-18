@@ -1,7 +1,6 @@
 import {
   getSupabaseConfig,
   guestIdentity,
-  isSupabaseUnavailable,
   methodNotAllowed,
   readJson,
   sendJson,
@@ -51,21 +50,6 @@ export default async function handler(request, response) {
       requires_confirmation: result.session == null,
     });
   } catch (error) {
-    if (isSupabaseUnavailable(error)) {
-      const user = guestIdentity({
-        name: String(payload?.name || "").trim(),
-        email: String(payload?.email || "").trim(),
-      });
-      sendJson(response, {
-        user,
-        session: null,
-        requires_confirmation: false,
-        guest: true,
-        degraded_auth: true,
-      });
-      return;
-    }
-
     sendJson(response, { error: error.message || "Sign up failed" }, error.status || 500);
   }
 }

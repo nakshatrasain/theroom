@@ -130,21 +130,6 @@ export function guestIdentity({ name = "", email = "" } = {}) {
   };
 }
 
-export function isSupabaseUnavailable(error) {
-  const status = Number(error?.status || 0);
-  const message = String(error?.message || "").toLowerCase();
-
-  return (
-    !status ||
-    status >= 500 ||
-    message.includes("fetch failed") ||
-    message.includes("supabase is not configured") ||
-    message.includes("enotfound") ||
-    message.includes("network") ||
-    message.includes("timeout")
-  );
-}
-
 export async function supabaseRequest(path, { method = "GET", body, accessToken, headers: extraHeaders } = {}) {
   const config = getSupabaseConfig();
   if (!config) {
@@ -281,40 +266,48 @@ export async function fetchAuthUser(accessToken) {
 }
 
 export function normalizeProfile(profile = {}) {
-  const required = [
-    "name",
-    "role",
-    "event_goal",
-    "build_interest",
-    "bio",
-    "looking_for",
-    "contact_handle",
-  ];
-
-  for (const key of required) {
-    if (!String(profile[key] || "").trim()) {
-      const error = new Error(`Missing required field: ${key}`);
-      error.status = 400;
-      throw error;
-    }
+  const name = String(profile.name || "").trim();
+  if (!name) {
+    const error = new Error("Missing required field: name");
+    error.status = 400;
+    throw error;
   }
+
+  const linkedinHandle = String(profile.linkedin_handle || "").trim();
+  const instagramHandle = String(profile.instagram_handle || "").trim();
+  const xHandle = String(profile.x_handle || "").trim();
+  const contactHandle =
+    String(profile.contact_handle || "").trim() || linkedinHandle || instagramHandle || xHandle;
+  const role = String(profile.role || "").trim() || "Builder";
+  const eventGoal = String(profile.event_goal || "").trim() || "Meet interesting people at this event";
+  const buildInterest = String(profile.build_interest || "").trim();
+  const lookingFor = String(profile.looking_for || "").trim();
+  const strengthZone = String(profile.strength_zone || "product").trim();
+  const bio =
+    String(profile.bio || "").trim() ||
+    `${role} focused on ${buildInterest || eventGoal}. Strongest in ${
+      normalizeList(profile.skills).join(", ") || strengthZone
+    }.`;
 
   return {
     id:
       profile.id ||
-      `profile-${slugify(String(profile.name || ""))}`,
-    name: String(profile.name).trim(),
-    role: String(profile.role).trim(),
+      `profile-${slugify(name)}`,
+    name,
+    role,
     skills: normalizeList(profile.skills),
-    event_goal: String(profile.event_goal).trim(),
-    build_interest: String(profile.build_interest).trim(),
-    bio: String(profile.bio).trim(),
+    event_goal: eventGoal,
+    build_interest: buildInterest,
+    bio,
     build_style: String(profile.build_style || "visionary").trim(),
     pace: String(profile.pace || "fast-moving").trim(),
     collaboration: String(profile.collaboration || "balanced").trim(),
-    strength_zone: String(profile.strength_zone || "product").trim(),
-    looking_for: String(profile.looking_for).trim(),
-    contact_handle: String(profile.contact_handle).trim(),
+    strength_zone: strengthZone,
+    looking_for: lookingFor,
+    contact_handle: contactHandle,
+    linkedin_handle: linkedinHandle,
+    instagram_handle: instagramHandle,
+    x_handle: xHandle,
   };
 }
 
