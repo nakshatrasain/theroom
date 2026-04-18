@@ -224,13 +224,18 @@ export async function upsertAttendee(profile) {
     return profile;
   }
 
-  await supabaseRequest("/rest/v1/attendees?on_conflict=id", {
-    method: "POST",
-    body: profile,
-    headers: {
-      Prefer: "resolution=merge-duplicates,return=minimal",
-    },
-  });
+  try {
+    await supabaseRequest("/rest/v1/attendees?on_conflict=id", {
+      method: "POST",
+      body: profile,
+      headers: {
+        Prefer: "resolution=merge-duplicates,return=minimal",
+      },
+    });
+  } catch (_error) {
+    // Saving to Supabase should never block the core matching flow.
+    return profile;
+  }
 
   return profile;
 }
