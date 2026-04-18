@@ -273,6 +273,13 @@ export async function signOut(accessToken) {
   return null;
 }
 
+export async function fetchAuthUser(accessToken) {
+  return supabaseRequest("/auth/v1/user", {
+    method: "GET",
+    accessToken,
+  });
+}
+
 export function normalizeProfile(profile = {}) {
   const required = [
     "name",

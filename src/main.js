@@ -19,6 +19,8 @@ const authEmailField = document.querySelector("#authEmailField");
 const authPasswordField = document.querySelector("#authPasswordField");
 const authNote = document.querySelector("#authNote");
 const authSubmitButton = document.querySelector("#authSubmitButton");
+const oauthDivider = document.querySelector("#oauthDivider");
+const googleAuthButton = document.querySelector("#googleAuthButton");
 const profileForm = document.querySelector("#profileForm");
 const logoutButton = document.querySelector("#logoutButton");
 const matchTriggerButton = document.querySelector("#matchTriggerButton");
@@ -132,6 +134,8 @@ function renderStatuses() {
   authToggle.hidden = guestMode;
   authEmailField.hidden = guestMode;
   authPasswordField.hidden = guestMode;
+  oauthDivider.hidden = guestMode;
+  googleAuthButton.hidden = guestMode;
 
   if (guestMode) {
     state.authMode = "guest";
@@ -409,6 +413,60 @@ function syncAuthMode() {
   }
 }
 
+function persistAuth(result, mode, fallbackPayload = {}) {
+  state.authProfile = {
+    mode,
+    name: result.user?.name || fallbackPayload.name || "Guest",
+    email: result.user?.email || fallbackPayload.email || "",
+    id: result.user?.id || "",
+  };
+  state.authSession = result.session || null;
+  localStorage.setItem("the-room-auth", JSON.stringify(state.authProfile));
+  if (state.authSession) {
+    localStorage.setItem("the-room-auth-session", JSON.stringify(state.authSession));
+  } else {
+    localStorage.removeItem("the-room-auth-session");
+  }
+  logoutButton.hidden = false;
+}
+
+function authCallbackParams() {
+  const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
+  return new URLSearchParams(hash);
+}
+
+async function restoreOAuthSessionFromUrl() {
+  const params = authCallbackParams();
+  const accessToken = params.get("access_token");
+  const refreshToken = params.get("refresh_token");
+  const errorDescription = params.get("error_description");
+
+  if (!accessToken && !errorDescription) {
+    return false;
+  }
+
+  window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
+
+  if (errorDescription) {
+    throw new Error(errorDescription.replace(/\+/g, " "));
+  }
+
+  const session = {
+    access_token: accessToken,
+    refresh_token: refreshToken || "",
+    expires_in: Number(params.get("expires_in") || 0),
+    token_type: params.get("token_type") || "bearer",
+  };
+
+  const payload = await request("/api/auth/session", {
+    method: "POST",
+    body: JSON.stringify({ access_token: session.access_token }),
+  });
+
+  persistAuth({ user: payload.user, session }, "google");
+  return true;
+}
+
 async function request(path, options = {}) {
   const response = await fetch(path, {
     headers: {
@@ -445,6 +503,11 @@ async function authenticate(mode, payload) {
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+function beginGoogleAuth() {
+  const redirectTo = `${window.location.origin}${window.location.pathname}`;
+  window.location.assign(`/api/auth/google?redirect_to=${encodeURIComponent(redirectTo)}`);
 }
 
 async function loadConfig() {
@@ -651,18 +714,7 @@ authForm.addEventListener("submit", async (event) => {
       throw new Error("Check your email to confirm your account before signing in.")
     }
 
-    state.authProfile = {
-      mode: state.authMode,
-      name: result.user?.name || payload.name || "Guest",
-      email: result.user?.email || payload.email,
-      id: result.user?.id || "",
-    };
-    state.authSession = result.session || null;
-    localStorage.setItem("the-room-auth", JSON.stringify(state.authProfile));
-    if (state.authSession) {
-      localStorage.setItem("the-room-auth-session", JSON.stringify(state.authSession));
-    }
-    logoutButton.hidden = false;
+    persistAuth(result, state.authMode, payload);
     setActiveScreen("setup");
   } catch (error) {
     alert(error.message);
@@ -697,6 +749,7 @@ generateIntroButton.addEventListener("click", generateIntro);
 requestConnectionButton.addEventListener("click", requestConnection);
 sendMessageButton.addEventListener("click", sendMessage);
 logoutButton.addEventListener("click", logout);
+googleAuthButton.addEventListener("click", beginGoogleAuth);
 directorySearch.addEventListener("input", renderDirectory);
 directoryFilter.addEventListener("change", renderDirectory);
 
@@ -741,9 +794,14 @@ async function bootstrap() {
   }
 
   await loadConfig();
+  const restoredFromOAuth = await restoreOAuthSessionFromUrl();
   await loadAttendees();
   requestConnectionButton.disabled = true;
   sendMessageButton.disabled = true;
+  if (restoredFromOAuth || state.authProfile) {
+    setActiveScreen("setup");
+    return;
+  }
   setActiveScreen("landing");
 }
 

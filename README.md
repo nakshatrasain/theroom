@@ -19,6 +19,14 @@ Copy `.env.example` to `.env` and fill in the keys you want:
 
 Without keys, the app still works using local mock attendees in `data/mock_attendees.json`.
 
+## Google sign-in with Supabase
+
+If you want the Google login button to work:
+
+- Enable the Google provider in your Supabase Auth dashboard.
+- Add your local URL (for example `http://127.0.0.1:4173`) and deployed site URL to Supabase Auth redirect URLs.
+- Add the Google OAuth client credentials in Supabase and the Supabase callback URL in your Google Cloud OAuth app.
+
 ## Supabase
 
 Run:
