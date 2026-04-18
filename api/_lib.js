@@ -416,20 +416,34 @@ async function openaiResponse(payload) {
     return null;
   }
 
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-  const raw = await response.json();
-  if (!response.ok) {
+    const text = await response.text();
+    let raw = null;
+    if (text) {
+      try {
+        raw = JSON.parse(text);
+      } catch (_error) {
+        raw = null;
+      }
+    }
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return raw;
+  } catch (_error) {
     return null;
   }
-  return raw;
 }
 
 export async function openaiJson(payload) {
