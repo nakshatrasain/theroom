@@ -125,7 +125,7 @@ function renderStatuses() {
     return;
   }
 
-  const guestMode = !state.config.supabase_enabled;
+  const guestMode = !state.config.supabase_enabled || !state.config.supabase_ready;
   const emailInput = authForm.elements.namedItem("email");
   const passwordInput = authForm.elements.namedItem("password");
 

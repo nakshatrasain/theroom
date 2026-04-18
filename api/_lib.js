@@ -130,6 +130,21 @@ export function guestIdentity({ name = "", email = "" } = {}) {
   };
 }
 
+export function isSupabaseUnavailable(error) {
+  const status = Number(error?.status || 0);
+  const message = String(error?.message || "").toLowerCase();
+
+  return (
+    !status ||
+    status >= 500 ||
+    message.includes("fetch failed") ||
+    message.includes("supabase is not configured") ||
+    message.includes("enotfound") ||
+    message.includes("network") ||
+    message.includes("timeout")
+  );
+}
+
 export async function supabaseRequest(path, { method = "GET", body, accessToken, headers: extraHeaders } = {}) {
   const config = getSupabaseConfig();
   if (!config) {
