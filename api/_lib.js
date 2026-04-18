@@ -130,10 +130,28 @@ export function guestIdentity({ name = "", email = "" } = {}) {
   };
 }
 
+export function isSupabaseUnavailable(error) {
+  const status = Number(error?.status || 0);
+  const message = String(error?.message || "").toLowerCase();
+
+  return (
+    !status ||
+    status >= 500 ||
+    message.includes("fetch failed") ||
+    message.includes("supabase is not configured") ||
+    message.includes("temporarily unavailable") ||
+    message.includes("enotfound") ||
+    message.includes("network") ||
+    message.includes("timeout")
+  );
+}
+
 export async function supabaseRequest(path, { method = "GET", body, accessToken, headers: extraHeaders } = {}) {
   const config = getSupabaseConfig();
   if (!config) {
-    throw new Error("Supabase is not configured");
+    const error = new Error("Supabase is not configured");
+    error.status = 503;
+    throw error;
   }
 
   const headers = {
@@ -154,11 +172,18 @@ export async function supabaseRequest(path, { method = "GET", body, accessToken,
 
   Object.assign(headers, extraHeaders || {});
 
-  const response = await fetch(`${config.url}${path}`, {
-    method,
-    headers,
-    body: payload,
-  });
+  let response;
+  try {
+    response = await fetch(`${config.url}${path}`, {
+      method,
+      headers,
+      body: payload,
+    });
+  } catch (_error) {
+    const error = new Error("Authentication service is temporarily unavailable");
+    error.status = 503;
+    throw error;
+  }
 
   const text = await response.text();
   let data = null;
