@@ -112,6 +112,7 @@ function primaryContactAction(attendee) {
     return {
       label: "LinkedIn",
       url: normalizeUrl(attendee.linkedin_handle, "https://www.linkedin.com/in/"),
+      value: attendee.linkedin_handle,
     };
   }
 
@@ -119,6 +120,7 @@ function primaryContactAction(attendee) {
     return {
       label: "X",
       url: normalizeUrl(attendee.x_handle, "https://x.com/"),
+      value: attendee.x_handle,
     };
   }
 
@@ -126,6 +128,7 @@ function primaryContactAction(attendee) {
     return {
       label: "Instagram",
       url: normalizeUrl(attendee.instagram_handle, "https://www.instagram.com/"),
+      value: attendee.instagram_handle,
     };
   }
 
@@ -133,13 +136,22 @@ function primaryContactAction(attendee) {
     return {
       label: "Email",
       url: `mailto:${attendee.contact_handle}`,
+      value: attendee.contact_handle,
     };
   }
 
   if (attendee.contact_handle) {
+    if (looksLikeUrl(attendee.contact_handle)) {
+      return {
+        label: "Contact",
+        url: attendee.contact_handle,
+        value: attendee.contact_handle,
+      };
+    }
+
     return {
       label: "Contact",
-      url: attendee.contact_handle,
+      value: attendee.contact_handle,
     };
   }
 
@@ -467,7 +479,8 @@ function renderDetail() {
     </div>
   `;
 
-  const hasContactAction = Boolean(primaryContactAction(attendee));
+  const action = primaryContactAction(attendee);
+  const hasContactAction = Boolean(action?.url || action?.value);
   requestConnectionButton.disabled = !hasContactAction;
   sendMessageButton.disabled = !hasContactAction;
 }
@@ -709,13 +722,19 @@ function requestConnection() {
   }
 
   const action = primaryContactAction(attendee);
-  if (!action?.url) {
+  if (!action?.url && !action?.value) {
     introOutput.value = `${attendee.name} has not shared a contact method yet.`;
     return;
   }
 
-  window.open(action.url, "_blank", "noopener,noreferrer");
-  introOutput.value = `Opened ${action.label} for ${attendee.name}.`;
+  if (action.url) {
+    window.open(action.url, "_blank", "noopener,noreferrer");
+    introOutput.value = `Opened ${action.label} for ${attendee.name}.`;
+    return;
+  }
+
+  copyText(action.value);
+  introOutput.value = `Copied ${attendee.name}'s contact handle: ${action.value}`;
 }
 
 async function sendMessage() {
@@ -726,7 +745,7 @@ async function sendMessage() {
   }
 
   const action = primaryContactAction(attendee);
-  if (!action?.url) {
+  if (!action?.url && !action?.value) {
     introOutput.value = `${attendee.name} has not shared a contact method yet.`;
     return;
   }
@@ -734,12 +753,19 @@ async function sendMessage() {
   const message = introOutput.value.trim() || fallbackIntroMessage(attendee);
   const copied = await copyText(message);
 
-  if (action.label === "Email") {
+  if (action.label === "Email" && action.url) {
     const subject = encodeURIComponent(`Quick hello from ${state.currentProfile?.name || "The Room"}`);
     const body = encodeURIComponent(message);
     window.open(`${action.url}?subject=${subject}&body=${body}`, "_blank", "noopener,noreferrer");
-  } else {
+  } else if (action.url) {
     window.open(action.url, "_blank", "noopener,noreferrer");
+  } else {
+    const combined = `${action.value}\n\n${message}`;
+    const copiedCombined = await copyText(combined);
+    introOutput.value = copiedCombined
+      ? `Copied ${attendee.name}'s handle and your intro message.`
+      : `Copy this message manually and send it to ${action.value}.`;
+    return;
   }
 
   introOutput.value = copied
