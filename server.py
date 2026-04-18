@@ -453,6 +453,31 @@ class TheRoomHandler(BaseHTTPRequestHandler):
             )
             return
 
+        if self.path == "/api/debug":
+            client = get_supabase_client()
+            ready = supabase_ready(client)
+            self._json(
+                {
+                    "env": {
+                        "ROOM_EVENT_NAME": bool(os.getenv("ROOM_EVENT_NAME")),
+                        "OPENAI_API_KEY": bool(os.getenv("OPENAI_API_KEY")),
+                        "OPENAI_MODEL": bool(os.getenv("OPENAI_MODEL")),
+                        "SUPABASE_URL": bool(os.getenv("SUPABASE_URL")),
+                        "SUPABASE_SERVICE_ROLE_KEY": bool(os.getenv("SUPABASE_SERVICE_ROLE_KEY")),
+                        "SUPABASE_ANON_KEY": bool(os.getenv("SUPABASE_ANON_KEY")),
+                    },
+                    "supabase": {
+                        "enabled": bool(client),
+                        "ready": ready,
+                        "key_source": os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+                        and "service_role"
+                        or os.getenv("SUPABASE_ANON_KEY")
+                        and "anon",
+                    },
+                }
+            )
+            return
+
         if self.path == "/api/attendees":
             try:
                 attendees = self.load_attendees()

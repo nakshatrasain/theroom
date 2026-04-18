@@ -20,6 +20,13 @@ function normalizeList(values) {
     .filter(Boolean);
 }
 
+function slugify(value = "") {
+  return String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export function jsonResponse(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
     status,
@@ -106,6 +113,20 @@ export function getSupabaseConfig() {
   return {
     url: url.replace(/\/$/, ""),
     key,
+  };
+}
+
+export function guestIdentity({ name = "", email = "" } = {}) {
+  const normalizedName = String(name).trim();
+  const normalizedEmail = String(email).trim();
+  const fallbackName =
+    normalizedName || (normalizedEmail ? normalizedEmail.split("@")[0] : "Guest");
+  const slug = slugify(normalizedName || normalizedEmail || "guest") || "guest";
+
+  return {
+    id: `guest-${slug}`,
+    email: normalizedEmail,
+    name: fallbackName,
   };
 }
 
@@ -254,10 +275,7 @@ export function normalizeProfile(profile = {}) {
   return {
     id:
       profile.id ||
-      `profile-${String(profile.name || "")
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "")}`,
+      `profile-${slugify(String(profile.name || ""))}`,
     name: String(profile.name).trim(),
     role: String(profile.role).trim(),
     skills: normalizeList(profile.skills),

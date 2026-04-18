@@ -1,4 +1,4 @@
-import { methodNotAllowed, readJson, sendJson, signUp } from "../_lib.js";
+import { getSupabaseConfig, guestIdentity, methodNotAllowed, readJson, sendJson, signUp } from "../_lib.js";
 
 export default async function handler(request, response) {
   if (request.method !== "POST") {
@@ -11,6 +11,17 @@ export default async function handler(request, response) {
     const name = String(payload.name || "").trim();
     const email = String(payload.email || "").trim();
     const password = String(payload.password || "").trim();
+
+    if (!getSupabaseConfig()) {
+      const user = guestIdentity({ name, email });
+      sendJson(response, {
+        user,
+        session: null,
+        requires_confirmation: false,
+        guest: true,
+      });
+      return;
+    }
 
     if (!name || !email || !password) {
       sendJson(response, { error: "Name, email, and password are required" }, 400);

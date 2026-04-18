@@ -12,8 +12,13 @@ const state = {
 
 const screens = Array.from(document.querySelectorAll("[data-screen]"));
 const authTabs = Array.from(document.querySelectorAll("[data-auth-tab]"));
+const authToggle = document.querySelector("#authToggle");
 const authForm = document.querySelector("#authForm");
 const authNameField = document.querySelector("#authNameField");
+const authEmailField = document.querySelector("#authEmailField");
+const authPasswordField = document.querySelector("#authPasswordField");
+const authNote = document.querySelector("#authNote");
+const authSubmitButton = document.querySelector("#authSubmitButton");
 const profileForm = document.querySelector("#profileForm");
 const logoutButton = document.querySelector("#logoutButton");
 const matchTriggerButton = document.querySelector("#matchTriggerButton");
@@ -119,6 +124,39 @@ function renderStatuses() {
   if (!state.config) {
     return;
   }
+
+  const guestMode = !state.config.supabase_enabled;
+  const emailInput = authForm.elements.namedItem("email");
+  const passwordInput = authForm.elements.namedItem("password");
+
+  authToggle.hidden = guestMode;
+  authEmailField.hidden = guestMode;
+  authPasswordField.hidden = guestMode;
+
+  if (guestMode) {
+    state.authMode = "guest";
+    authTabs.forEach((tab) => tab.classList.remove("is-active"));
+    emailInput.required = false;
+    passwordInput.required = false;
+    emailInput.value = "";
+    passwordInput.value = "";
+    authSubmitButton.textContent = "Continue as guest";
+    authNote.textContent =
+      "Supabase auth is not configured on this deployment, so you can enter with your name and try the app in guest mode.";
+  } else {
+    if (state.authMode === "guest") {
+      state.authMode = "signup";
+    }
+    emailInput.required = true;
+    passwordInput.required = true;
+    authSubmitButton.textContent = "Continue";
+    authNote.textContent = "Sign in, step into the room, and let the matching begin.";
+    authTabs.forEach((tab) => {
+      tab.classList.toggle("is-active", tab.dataset.authTab === state.authMode);
+    });
+  }
+
+  syncAuthMode();
 }
 
 function currentMatch() {
@@ -359,10 +397,11 @@ function attachAuthTabs() {
 
 function syncAuthMode() {
   const nameInput = authForm.elements.namedItem("name");
+  const isGuest = state.authMode === "guest";
   const isSignIn = state.authMode === "signin";
 
-  authNameField.hidden = isSignIn;
-  nameInput.required = !isSignIn;
+  authNameField.hidden = isSignIn && !isGuest;
+  nameInput.required = !isSignIn || isGuest;
   if (isSignIn) {
     nameInput.value = "";
   } else if (state.authProfile?.name) {
@@ -388,6 +427,19 @@ async function request(path, options = {}) {
 }
 
 async function authenticate(mode, payload) {
+  if (mode === "guest") {
+    return {
+      user: {
+        id: `guest-${(payload.name || "guest").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "guest"}`,
+        email: "",
+        name: payload.name || "Guest",
+      },
+      session: null,
+      requires_confirmation: false,
+      guest: true,
+    };
+  }
+
   const endpoint = mode === "signup" ? "/api/auth/signup" : "/api/auth/signin";
   return request(endpoint, {
     method: "POST",

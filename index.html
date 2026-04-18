@@ -159,7 +159,7 @@
                     <p>Start with a profile. We’ll guide the rest.</p>
                   </div>
 
-                  <div class="auth-toggle" role="tablist" aria-label="Auth mode">
+                  <div id="authToggle" class="auth-toggle" role="tablist" aria-label="Auth mode">
                     <button type="button" class="auth-tab is-active" data-auth-tab="signup">Sign up</button>
                     <button type="button" class="auth-tab" data-auth-tab="signin">Sign in</button>
                   </div>
@@ -169,19 +169,19 @@
                       <span>Name</span>
                       <input name="name" type="text" placeholder="Nakshatra" required />
                     </label>
-                    <label>
+                    <label id="authEmailField">
                       <span>Email</span>
                       <input name="email" type="email" placeholder="you@example.com" required />
                     </label>
-                    <label>
+                    <label id="authPasswordField">
                       <span>Password</span>
                       <input name="password" type="password" placeholder="••••••••" required />
                     </label>
 
-                    <button type="submit">Continue</button>
+                    <button id="authSubmitButton" type="submit">Continue</button>
                   </form>
 
-                  <p class="auth-note">
+                  <p id="authNote" class="auth-note">
                     Sign in, step into the room, and let the matching begin.
                   </p>
                 </aside>
