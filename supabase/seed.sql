@@ -1,0 +1,75 @@
+insert into attendees (
+  id,
+  name,
+  role,
+  skills,
+  event_goal,
+  build_interest,
+  bio,
+  build_style,
+  pace,
+  collaboration,
+  strength_zone,
+  looking_for,
+  contact_handle
+)
+values
+  (
+    'attendee-aarav',
+    'Aarav Shah',
+    'Product Engineer',
+    '["AI", "Frontend", "Product thinking"]'::jsonb,
+    'Find a founder to build with this weekend',
+    'Developer tools, workflow software, AI copilots',
+    'Fast shipping engineer who likes turning rough ideas into polished demos before everyone else.',
+    'maker',
+    'fast-moving',
+    'balanced',
+    'engineering',
+    'Founder, designer',
+    '@aarav'
+  ),
+  (
+    'attendee-rhea',
+    'Rhea Kapoor',
+    'Product Designer',
+    '["Design systems", "UX", "Brand"]'::jsonb,
+    'Meet technical builders working on consumer products',
+    'Consumer AI, social products, habit-forming apps',
+    'Designer who brings clarity to messy product ideas and cares a lot about first impressions.',
+    'visionary',
+    'steady',
+    'social',
+    'design',
+    'Engineer, founder',
+    '@rhea'
+  ),
+  (
+    'attendee-kabir',
+    'Kabir Mehta',
+    'Growth Operator',
+    '["Distribution", "Community", "GTM"]'::jsonb,
+    'Find products that need launch strategy and early traction',
+    'B2B SaaS, communities, creator tools',
+    'Loves figuring out why people care and how to get the first hundred users fast.',
+    'operator',
+    'fast-moving',
+    'social',
+    'growth',
+    'Founder, PM, marketer',
+    '@kabir'
+  )
+on conflict (id) do update
+set
+  name = excluded.name,
+  role = excluded.role,
+  skills = excluded.skills,
+  event_goal = excluded.event_goal,
+  build_interest = excluded.build_interest,
+  bio = excluded.bio,
+  build_style = excluded.build_style,
+  pace = excluded.pace,
+  collaboration = excluded.collaboration,
+  strength_zone = excluded.strength_zone,
+  looking_for = excluded.looking_for,
+  contact_handle = excluded.contact_handle;

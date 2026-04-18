@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Room | Network Better At Events</title>
+    <meta
+      name="description"
+      content="The Room helps you meet the right people at events using psychology-backed matching and AI-generated context."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-lockup">
+          <div class="brand-mark">R</div>
+          <div class="brand-copy">
+            <strong>The Room</strong>
+          </div>
+        </div>
+        <button id="logoutButton" type="button" class="button-secondary logout-button" hidden>
+          Logout
+        </button>
+      </header>
+
+      <main class="workflow">
+        <section class="screen is-active" data-screen="landing">
+          <div class="landing-cinematic">
+            <section class="landing-band hero-band">
+              <div class="landing-inner story-grid">
+                <div class="story-copy">
+                  <p class="eyebrow">For the ones walking in alone</p>
+                  <h2 class="display-title">
+                    Network better at events.
+                    <span>Know who to meet first.</span>
+                  </h2>
+                  <p class="hero-text">
+                    Walk in with context, not guesswork.
+                  </p>
+                </div>
+
+                <div class="hero-visual-grid">
+                  <article class="metric-panel">
+                    <div class="metric-ring metric-ring-gold"><span>Goal</span></div>
+                    <strong>Build a team</strong>
+                  </article>
+                  <article class="metric-panel">
+                    <div class="metric-ring metric-ring-rose"><span>Fit</span></div>
+                    <strong>Complement</strong>
+                  </article>
+                  <article class="metric-panel">
+                    <div class="metric-ring metric-ring-mint"><span>Style</span></div>
+                    <strong>Chemistry</strong>
+                  </article>
+                  <article class="metric-panel">
+                    <div class="metric-ring metric-ring-lilac"><span>AI</span></div>
+                    <strong>Context first</strong>
+                  </article>
+                </div>
+              </div>
+            </section>
+
+            <section class="landing-band">
+              <div class="landing-inner story-grid">
+                <div class="story-copy">
+                  <p class="eyebrow">The problem</p>
+                  <h3 class="section-display">Everyone around you is busy, distracted, or random.</h3>
+                  <p class="body-copy">
+                    Events are full of useful people. Most of us just leave it to chance.
+                  </p>
+                  <p class="body-copy emphasis">Until now.</p>
+                </div>
+
+                <div class="signal-bars">
+                  <article class="signal-bar-card">
+                    <div><strong>Random conversations</strong><span>2h+</span></div>
+                    <div class="bar-track"><span style="width:82%"></span></div>
+                  </article>
+                  <article class="signal-bar-card">
+                    <div><strong>Meeting the right person</strong><span>0m</span></div>
+                    <div class="bar-track"><span class="is-good" style="width:6%"></span></div>
+                  </article>
+                  <article class="signal-bar-card">
+                    <div><strong>Badge scanning</strong><span>1h+</span></div>
+                    <div class="bar-track"><span class="is-warm" style="width:68%"></span></div>
+                  </article>
+                  <article class="signal-bar-card">
+                    <div><strong>Context before saying hi</strong><span>2 sec</span></div>
+                    <div class="bar-track"><span class="is-bright" style="width:14%"></span></div>
+                  </article>
+                </div>
+              </div>
+            </section>
+
+            <section class="landing-band">
+              <div class="landing-inner centered-section">
+                <p class="eyebrow">How The Room works</p>
+                <h3 class="section-display centered">Three signals. One better starting point.</h3>
+                <div class="concept-grid feature-triptych">
+                  <article class="concept-card">
+                    <span class="concept-icon">01</span>
+                    <h3>Intent</h3>
+                    <p>What you want right now.</p>
+                  </article>
+                  <article class="concept-card">
+                    <span class="concept-icon">02</span>
+                    <h3>Complement</h3>
+                    <p>Who balances your strengths.</p>
+                  </article>
+                  <article class="concept-card concept-card-accent">
+                    <span class="concept-icon">03</span>
+                    <h3>Chemistry</h3>
+                    <p>How the connection is likely to feel.</p>
+                  </article>
+                </div>
+              </div>
+            </section>
+
+            <section class="landing-band">
+              <div class="landing-inner story-grid">
+                <div class="framework-visual">
+                  <div class="framework-wheel">
+                    <div class="wheel-core">
+                      <strong>3</strong>
+                      <span>signals</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="story-copy">
+                  <p class="eyebrow">The framework</p>
+                  <h3 class="section-display">Goal. Strength. Style. Your room, finally in one place.</h3>
+                  <p class="body-copy">
+                    The Room combines what you want, what you bring, and how you work to rank the people worth meeting first.
+                  </p>
+                  <div class="framework-list">
+                    <span>Goal fit</span>
+                    <span>Skill complement</span>
+                    <span>Working style</span>
+                    <span>Conversation context</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="landing-band landing-band-cta">
+              <div class="landing-inner auth-wrap">
+                <aside class="auth-panel landing-auth-panel">
+                  <div class="auth-header">
+                    <p class="eyebrow">Step 1</p>
+                    <h2>Enter the room.</h2>
+                    <p>Start with a profile. We’ll guide the rest.</p>
+                  </div>
+
+                  <div class="auth-toggle" role="tablist" aria-label="Auth mode">
+                    <button type="button" class="auth-tab is-active" data-auth-tab="signup">Sign up</button>
+                    <button type="button" class="auth-tab" data-auth-tab="signin">Sign in</button>
+                  </div>
+
+                  <form id="authForm" class="auth-form">
+                    <label id="authNameField">
+                      <span>Name</span>
+                      <input name="name" type="text" placeholder="Nakshatra" required />
+                    </label>
+                    <label>
+                      <span>Email</span>
+                      <input name="email" type="email" placeholder="you@example.com" required />
+                    </label>
+                    <label>
+                      <span>Password</span>
+                      <input name="password" type="password" placeholder="••••••••" required />
+                    </label>
+
+                    <button type="submit">Continue</button>
+                  </form>
+
+                  <p class="auth-note">
+                    Sign in, step into the room, and let the matching begin.
+                  </p>
+                </aside>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="setup">
+          <div class="screen-shell setup-shell">
+            <div class="screen-copy setup-copy">
+              <p class="eyebrow">Step 2</p>
+              <h2>Tell The Room who you want to meet.</h2>
+              <p>Set your intent. Start matching.</p>
+            </div>
+
+            <div class="setup-grid">
+              <article class="match-visual-panel">
+                <div class="orb-stage">
+                  <button id="matchTriggerButton" class="orb-button" type="button">
+                    <span>Start matching</span>
+                  </button>
+                  <div class="orb-ring orb-ring-one"></div>
+                  <div class="orb-ring orb-ring-two"></div>
+                  <div class="orb-ring orb-ring-three"></div>
+                </div>
+
+                <div class="how-grid">
+                  <article class="how-card">
+                    <strong>Intent</strong>
+                    <span>Goal</span>
+                  </article>
+                  <article class="how-card">
+                    <strong>Strength</strong>
+                    <span>Fit</span>
+                  </article>
+                  <article class="how-card">
+                    <strong>Style</strong>
+                    <span>Chemistry</span>
+                  </article>
+                </div>
+
+                <p id="matchingStatus" class="matching-status">
+                  Ready when you are.
+                </p>
+              </article>
+
+              <form id="profileForm" class="setup-form">
+                <div class="field-grid two-up">
+                  <label>
+                    <span>Role</span>
+                    <input name="role" type="text" placeholder="Founder, engineer, designer" required />
+                  </label>
+                  <label>
+                    <span>Contact handle</span>
+                    <input name="contact_handle" type="text" placeholder="@telegram or email" required />
+                  </label>
+                </div>
+
+                <label>
+                  <span>What do you want from this event?</span>
+                  <div class="choice-grid" data-choice-group="event_goal">
+                    <button type="button" class="choice-chip is-active" data-choice-value="Find a teammate and build this weekend">Build a team</button>
+                    <button type="button" class="choice-chip" data-choice-value="Meet potential customers and get product feedback">Meet customers</button>
+                    <button type="button" class="choice-chip" data-choice-value="Find a cofounder or long-term collaborator">Find a cofounder</button>
+                    <button type="button" class="choice-chip" data-choice-value="Meet high-signal people worth knowing after the event">Meet the right people</button>
+                  </div>
+                  <input type="hidden" name="event_goal" value="Find a teammate and build this weekend" />
+                </label>
+
+                <div class="field-grid two-up">
+                  <label>
+                    <span>Top skills</span>
+                    <input name="skills" type="text" placeholder="AI, product, growth" required />
+                  </label>
+                  <label>
+                    <span>Looking for</span>
+                    <input name="looking_for" type="text" placeholder="Designer, engineer, GTM" required />
+                  </label>
+                </div>
+
+                <label>
+                  <span>What are you building or exploring?</span>
+                  <textarea name="build_interest" rows="3" placeholder="An AI event networking app for hackathons" required></textarea>
+                </label>
+
+                <div class="field-grid three-up">
+                  <label class="pick-group">
+                    <span>Strength</span>
+                    <div class="choice-grid choice-grid-compact" data-choice-group="strength_zone">
+                      <button type="button" class="choice-chip is-active" data-choice-value="product">Product</button>
+                      <button type="button" class="choice-chip" data-choice-value="engineering">Engineering</button>
+                      <button type="button" class="choice-chip" data-choice-value="design">Design</button>
+                      <button type="button" class="choice-chip" data-choice-value="growth">Growth</button>
+                      <button type="button" class="choice-chip" data-choice-value="ops">Ops</button>
+                    </div>
+                    <input type="hidden" name="strength_zone" value="product" />
+                  </label>
+
+                  <label class="pick-group">
+                    <span>Build style</span>
+                    <div class="choice-grid choice-grid-compact" data-choice-group="build_style">
+                      <button type="button" class="choice-chip is-active" data-choice-value="visionary">Visionary</button>
+                      <button type="button" class="choice-chip" data-choice-value="operator">Operator</button>
+                      <button type="button" class="choice-chip" data-choice-value="maker">Maker</button>
+                      <button type="button" class="choice-chip" data-choice-value="strategist">Strategist</button>
+                    </div>
+                    <input type="hidden" name="build_style" value="visionary" />
+                  </label>
+
+                  <label class="pick-group">
+                    <span>Pace</span>
+                    <div class="choice-grid choice-grid-compact" data-choice-group="pace">
+                      <button type="button" class="choice-chip is-active" data-choice-value="fast-moving">Fast</button>
+                      <button type="button" class="choice-chip" data-choice-value="steady">Steady</button>
+                      <button type="button" class="choice-chip" data-choice-value="deliberate">Deliberate</button>
+                    </div>
+                    <input type="hidden" name="pace" value="fast-moving" />
+                  </label>
+                </div>
+
+                <div class="action-row">
+                  <button type="submit">Generate matches</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="results">
+          <div class="screen-shell results-shell">
+            <div class="results-header">
+              <div>
+                <p class="eyebrow">Step 3</p>
+                <h2>Your best people in the room.</h2>
+              </div>
+              <p class="panel-copy" id="matchSummary">
+                Swipe through your first stack.
+              </p>
+            </div>
+
+            <div class="results-grid">
+              <section class="panel panel-results">
+                <div id="matchesState" class="empty-state">
+                  No stack yet. Complete the setup to generate matches.
+                </div>
+
+                <div id="matchesExperience" hidden>
+                  <div class="swipe-stage">
+                    <div id="swipeStack" class="swipe-stack"></div>
+
+                    <div class="swipe-actions">
+                      <button id="passButton" type="button" class="swipe-button swipe-button-muted">
+                        Pass
+                      </button>
+                      <button id="inspectButton" type="button" class="swipe-button">
+                        Why this fit
+                      </button>
+                      <button id="saveMatchButton" type="button" class="swipe-button swipe-button-strong">
+                        Save
+                      </button>
+                    </div>
+
+                    <div id="swipeProgress" class="swipe-progress"></div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="panel panel-detail">
+                <div class="panel-heading">
+                  <div>
+                    <p class="eyebrow">Connection context</p>
+                    <h2 id="detailName">Open a card to see the connection.</h2>
+                  </div>
+                  <p class="panel-copy" id="detailSubtitle">
+                    Context for the intro.
+                  </p>
+                </div>
+
+                <div id="detailCard" class="detail-card empty-state">
+                  Swipe or tap “Why this fit” on a card.
+                </div>
+
+                <div class="connection-actions">
+                  <button id="requestConnectionButton" type="button" class="button-secondary">
+                    Request connection
+                  </button>
+                  <button id="sendMessageButton" type="button">
+                    Send message
+                  </button>
+                </div>
+
+                <div class="intro-card">
+                  <div class="intro-header">
+                    <div>
+                      <p class="eyebrow">AI intro</p>
+                      <h3>Start with context.</h3>
+                    </div>
+                    <button id="generateIntroButton" type="button" class="button-secondary">
+                      Generate intro
+                    </button>
+                  </div>
+
+                  <textarea id="introOutput" rows="5" placeholder="Your intro message will appear here."></textarea>
+                </div>
+              </section>
+            </div>
+
+            <section class="panel panel-directory">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Explore</p>
+                  <h2>Everyone in the room.</h2>
+                </div>
+                <p class="panel-copy" id="directorySummary"></p>
+              </div>
+
+              <div class="field-grid two-up">
+                <label>
+                  <span>Search</span>
+                  <input id="directorySearch" type="search" placeholder="Name, role, skill, interest" />
+                </label>
+                <label>
+                  <span>Filter by strength</span>
+                  <select id="directoryFilter">
+                    <option value="all">All</option>
+                    <option value="product">Product</option>
+                    <option value="engineering">Engineering</option>
+                    <option value="design">Design</option>
+                    <option value="growth">Growth</option>
+                    <option value="ops">Ops</option>
+                  </select>
+                </label>
+              </div>
+
+              <div id="directoryList" class="directory-list"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
